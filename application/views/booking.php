@@ -89,6 +89,9 @@
                     				</td>
                     			</tr>
                     			<tr>
+                    				<td colspan="2" id="plot_related_details"></td>
+                    			</tr>
+                    			<tr>
                     				<td>Name:</td>
                     				<td>
                     					<input type="text" class="form-control" name="name" id="name" required />
@@ -250,12 +253,12 @@
               		<input type="text" class="form-control" id="client_contact" placeholder="Contact No.">
             	</div>
           	</div>
-          	<div class="form-group row">
+          	<!--<div class="form-group row">
             	<label for="inputPassword" class="col-sm-3 col-form-label">Discount</label>
             	<div class="col-sm-9">
               		<input type="text" class="form-control" id="client_discount" placeholder="Customer need discount">
             	</div>
-          	</div>
+          	</div> -->
           	<div class="form-group row">
             	<label for="inputPassword" class="col-sm-3 col-form-label">Remark</label>
             	<div class="col-sm-9">
@@ -278,7 +281,6 @@
 	var baseUrl = $('#base_url').val();
 	var pid;
 	$(document).on('click','#search',function(){
-	
 		$('#customer_detail').hide();
         $('#plot_detail').hide();
                 
@@ -307,6 +309,8 @@
             if(response.status == 200){
             	pid =  response.data[0].pid;
                 $.each(response.data,function(key,value){
+                	var PremiumAmount= 0;
+                	var AmenitiesAmount = 0;
                 	x = x + '<table border="1" width="100%">'+
                     			'<tr>'+
                     				'<td>'+ $("input[name='category']:checked").val().toUpperCase() +' No.</td>'+
@@ -326,24 +330,30 @@
                     			x = x + '<tr>'+
                     				'<td>Facing</td>'+
                     				'<td>'+ facing +'</td>'+
-                    			'</tr>'+
-                    			'<tr>'+
-                    				'<td>Construction Area</td>'+
-                    				'<td>'+ value.construction_area +'</td>'+
-                    			'</tr>'+
-                    			'<tr>'+
+                    			'</tr>';
+                    			if(category != 'plot'){
+                        			x = x + '<tr>'+
+                        				'<td>Construction Area</td>'+
+                        				'<td>'+ value.area +'</td>'+
+                        			'</tr>';
+                    			}
+                    			if(category == 'plot'){ 
+                    			x = x + '<tr>'+
+                        				'<td>Plot Area</td>'+
+                        				'<td>'+ value.area +'</td>'+
+                        			'</tr>'+
+                        			'<tr>';
+                    			}
+                    			x = x + '<tr>'+
                     				'<td>Rate</td>'+
                     				'<td>'+ value.rate_plot +'</td>'+
                     			'</tr>'+
                     			'<tr>'+
-                    				'<td>Plot Area</td>'+
-                    				'<td>'+ value.area +'</td>'+
-                    			'</tr>'+
-                    			'<tr>'+
-                    				'<td><b>Plot</b></td>'+
-                    				'<td><b>'+ (value.rate_plot*value.area) +'</b></td>'+
-                    			'</tr>'+
-                    			'<tr>'+
+                    				'<td>Total</td>'+
+                    				'<td>'+ parseFloat(parseFloat(value.rate_plot) * parseFloat(value.area)) +'</td>'+
+                    			'</tr>';
+                    			
+                    			x = x + '<tr>'+
                     				'<td>Amenities:-'+
                     				'<table>'+
                     						'<tr>'+
@@ -358,39 +368,44 @@
                     							'<td>Club house -</td>'+
                     							'<td>'+ value.club_house +'</td>'+
                     						'</tr>'+
-                    					'</table></td>'+
-                    				'<td valign="top">'+ (parseFloat(parseFloat(value.maintenance) + parseFloat(value.transformer)) + parseFloat(value.club_house)) +'</td>'+
+                    					'</table></td>';
+                    					AmenitiesAmount = parseFloat(parseFloat(parseFloat(value.maintenance) + parseFloat(value.transformer)) + parseFloat(value.club_house)); 
+                    				x = x + '<td valign="top">'+ AmenitiesAmount +'</td>'+
                     			'</tr>'+
                     			'<tr>'+
                     				'<td>Premium:-'+
                     					'<table>'+
                     						'<tr>'+
-                    							'<td>Corner 5% -</td>'+
-                    							'<td>'+ value.corner +'</td>'+
-                    						'</tr>'+
+                    							'<td>Corner 5% -</td>';
+                    							if(value.corner == '1'){
+                    								x = x + '<td>'+ (parseFloat(parseFloat(value.rate_plot) * parseFloat(value.area))*5)/100 +'</td>';
+                    								PremiumAmount = parseFloat(PremiumAmount + parseFloat((parseFloat(parseFloat(value.rate_plot) * parseFloat(value.area))*5)/100));
+                    								console.log('377');
+                    								console.log(PremiumAmount);
+                    							} else {
+                    								x = x + '<td></td>';
+                    							}
+                    							
+                    						x = x + '</tr>'+
                     						'<tr>'+
-                    							'<td>Garder 5% -</td>'+
-                    							'<td>'+ value.garden +'</td>'+
-                    						'</tr>'+
+                    							'<td>Garder 5% -</td>';
+                    							if(value.garden == '1'){
+                    								x = x + '<td>'+ (parseFloat(parseFloat(value.rate_plot) * parseFloat(value.area))*5)/100 +'</td>';
+                    								PremiumAmount = parseFloat(PremiumAmount + parseFloat((parseFloat(parseFloat(value.rate_plot) * parseFloat(value.area))*5)/100));
+                    								console.log('389');
+                    								console.log(PremiumAmount);
+                    							} else {
+                    								x = x + '<td></td>';
+                    							}
+                    						x = x + '</tr>'+
                     					'</table>'+
                     				'</td>'+
-                    				'<td valign="top">'+ parseFloat(parseFloat(value.corner) + parseFloat(value.garden)) +'</td>'+
+                    				'<td valign="top">'+ PremiumAmount +'</td>'+
                     			'</tr>'+
                     			'<tr>'+
                     				'<td>Total Amount</td>'+
-                    				'<td>'+ parseFloat(parseFloat(parseFloat(parseFloat(parseFloat(value.maintenance) + parseFloat(value.transformer)) 
-                    						+ parseFloat(value.club_house)) 
-                    						+ parseFloat(parseFloat(value.corner)+ parseFloat(value.garden))
-                    						) + parseFloat(value.rate_plot*value.area)) +'</td>'+
-                    			'</tr>'+
-                    			'<tr>'+
-                    				'<td>Final Amount</td>'+
-                    				'<td>'+ parseFloat(parseFloat(parseFloat(parseFloat(parseFloat(value.maintenance) + parseFloat(value.transformer)) 
-                    						+ parseFloat(value.club_house)) 
-                    						+ parseFloat(parseFloat(value.corner)+ parseFloat(value.garden))
-                    						) + parseFloat(value.rate_plot*value.area)) +'</td>'+
-                    			'</tr>'+
-                    		'</table>'+
+                    				'<td>'+ parseFloat(parseFloat(parseFloat(value.rate_plot) * parseFloat(value.area)) + parseFloat(AmenitiesAmount) + parseFloat(PremiumAmount)) +'</td>'+
+                    			'</tr></table>'+
                     	
                     		'<div class="mt-3 text-center">';
                     			var bookbtn;
@@ -416,6 +431,26 @@
 	});
 	
 	$(document).on('click','#booknow',function(){
+		var category = $("input[name='category']:checked").val();
+		
+		if(category == 'plot'){
+			var x = '<table width="100%"><tr>'+
+						'<td style="width:48%;">Discount</td>'+
+						'<td>'+
+							'<input id="discount" type="checkbox"/>'+
+							'&nbsp;<input type="text" id="discount_per" placeholder="discount percentage" style="display:none;">'+
+						'</td>'+
+					'</tr>'+
+					'<tr>'+
+						'<td>Construction facility</td>'+
+						'<td>'+
+							'<input id="construction_facility" type="checkbox"/>'+
+							'&nbsp;<input type="text" id="construction_area" placeholder="construction area" style="display:none;"/>'+
+						'</td>'+
+					'</tr></table>';
+			$('#plot_related_details').html(x).show();	
+		}
+	
 		$('#customer_detail').show();
 		$('#plot').val($('#pro_search').val());
 		$('#plot_category').html($("input[name='category']:checked").val().toUpperCase());
@@ -424,6 +459,7 @@
 	
 	$(document).on('click','#customer_cancel_btn',function(){
 		$('#customer_detail').hide();
+		$('#booknow').show();
 	});
 	
 	
@@ -488,7 +524,9 @@
             'family_members' : $('#family_members').val(),
             'emailid' : $('#emailid').val(),
             'pan' : $('#pan').val(),
-            'adhaar' : $('#adhaar').val()
+            'adhaar' : $('#adhaar').val(),
+            'discount_per' : $('#discount_per').val(),
+            'construction_area' : $('#construction_area').val()
           },
           dataType : 'json',
           success: function(response){
@@ -589,7 +627,6 @@
 		var plot_id = pid;
 		var client_name = $('#client_name').val();
 		var client_contact = $('#client_contact').val();
-		var client_discount = $('#client_discount').val();
 		var client_remark = $('#client_remark').val();
 		
 		$.ajax({
@@ -599,7 +636,6 @@
               	'plot_id' : plot_id,
               	'client_name' : client_name,
               	'client_contact' : client_contact,
-              	'client_discount' : client_discount,
               	'client_remark' : client_remark
               },
               dataType : 'json',
@@ -610,6 +646,31 @@
               }
        });
 	});
+	
+	$(document).on('click','#construction_facility',function(){
+		if($(this).prop('checked') == true){
+			$('#construction_area_row').show();
+		} else {
+			$('#construction_area_row').hide();
+		}
+	});
+	
+	$(document).on('click','#discount',function(){
+		if($(this).prop('checked') == true){
+			$('#discount_per').show();
+		} else {
+			$('#discount_per').hide();
+		}
+	});
+	
+	$(document).on('click','#construction_facility',function(){
+		if($(this).prop('checked') == true){
+			$('#construction_area').show();
+		} else {
+			$('#construction_area').hide();
+		}
+	});
+	
 </script>
 
 </body>

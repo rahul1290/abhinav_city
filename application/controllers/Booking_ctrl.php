@@ -46,6 +46,8 @@ class Booking_ctrl extends CI_Controller {
         $data['email'] = $this->input->post('emailid');
         $data['pan'] = $this->input->post('pan');
         $data['adhaar'] = $this->input->post('adhaar');
+        $data['discount'] = $this->input->post('discount_per') ?? null;
+        $data['construction_area'] = $this->input->post('construction_area') ?? null;
         $data['created_by'] = $this->session->userdata('userid');
         $data['created_at'] = date('d-m-Y H:i:s');
        
@@ -106,7 +108,6 @@ class Booking_ctrl extends CI_Controller {
         $data['property_id'] = $this->input->post('plot_id');
         $data['client_name'] = trim($this->input->post('client_name'));
         $data['client_number'] = trim($this->input->post('client_contact'));
-        $data['discount'] = trim($this->input->post('client_discount'));
         $data['remark'] = trim($this->input->post('client_remark'));
         $data['created_at'] = date('Y-m-d H:i:s');
         $data['created_by'] = $this->session->userdata('userid');

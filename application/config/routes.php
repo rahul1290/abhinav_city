@@ -6,5 +6,6 @@ $route['dashboard'] = 'Dashboard_ctrl';
 $route['booking'] = 'Booking_ctrl';
 $route['users'] = 'User_ctrl';
 $route['property'] = 'property_ctrl';
+$route['property/edit/(:any)'] = 'property_ctrl/edit/$1';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;

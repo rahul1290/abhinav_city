@@ -1,3 +1,4 @@
+<?php $permission = $this->session->userdata('permission');?>
 <!DOCTYPE html>
 <html lang="en">
 <?php print_r($header); ?>
@@ -23,67 +24,42 @@
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 					<div class="table-responsive">
-    					<table class="table table-bordered table-striped text-center" id="dataTable">
-    						<thead>
-    							<tr class="bg-dark text-light">
-    								<th>Sno</th>
-    								<th>Category</th>
-    								<th>Block Name</th>
-    								<th>Facing</th>
-    								<th>Enquiries</th>
-    								<th>Is Booked</th>
-    								<?php if($this->session->userdata('permission')['plot_entry']){ ?>
-    								<th>on Hold</th>
-    								<th>Action</th>
-    								<?php } ?>
-    							</tr>
-    						</thead>
-    						<tbody>
-    							<?php
-    							     $c = 1;
-    							     foreach($property_list as $plist){ ?>
-    								<tr>
-    									<td><?php echo $c++; ?>.</td>
-    									<td><?php echo $plist['category']; ?></td>
-    									<td><?php echo $plist['block']; ?></td>
-    									<td><?php echo $plist['facing']; ?></td>
-    									<td><?php if($plist['enquiry']){
-    									    echo '<a href="javascript:void(0);" class="enquiry" data-pid="'. $plist['pid'] .'">'.$plist['enquiry'].'</a>';
-    									}?></td>
-    									<td><?php 
-            									if($plist['is_booked']){
-            								        echo '<a href="javascript:void(0);" class="booked" data-pid="'. $plist['pid'] .'">Booked</a>';	    
-            									} else {
-            									 echo "";   
-            									} 
-    									    ?>
-    									</td>
-    									<?php if($this->session->userdata('permission')['plot_entry']){ ?>
-    									<?php if($plist['hold']){ ?>
-    										<td>
-        										<input title="property on hold" type="checkbox" class="ishold" data-id="<?php echo $plist['pid']; ?>" checked />
-        										<sub><span id="hold_text_<?php echo $plist['pid']; ?>"></span></sub>
-        									</td>
-    									<?php } else {?>
-    										<td>
-        										<input title="property on hold" type="checkbox" class="ishold" data-id="<?php echo $plist['pid']; ?>" />
-        										<sub><span id="hold_text_<?php echo $plist['pid']; ?>"></span></sub>
-        									</td>
-    									<?php } ?>
-    									<td>
-    										<a href="javascript:void(0);" class="text-info pedit" title="Edit Property" data-id="<?php echo $plist['pid']; ?>">
-    											<i class="fas fa-pencil-alt"></i>
-    										</a>
-    										&nbsp;
-    										<a href="javascript:void(0);" class="text-danger pdelete" title="Delete property" data-id="<?php echo $plist['pid']; ?>">
-    											<i class="fas fa-trash-alt"></i>
-    										</a>
-    									</td>
-    									<?php } ?>
-    								</tr>
-    							<?php } ?> 
-    						</tbody>
-    					</table>
+						
+						<label>Property Type</label>
+						<select id="property_type">
+							<option value="">-- All --</option>
+							<option value="plot">Plot</option>
+							<option value="flat">Flat</option>
+							<option value="bungalow">Bungalow</option>
+						</select>
+						<label>Facing</label>
+						<select id="property_facing">
+							<option value="">-- All --</option>
+							<option value="E">EAST</option>
+							<option value="W">WEST</option>
+							<option value="N">NORTH</option>
+							<option value="S">SOUTH</option>
+						</select>
+						
+						<label>Booking Status</label>
+						<select id="property_booking">
+							<option value="">-- All --</option>
+							<option value="1">Booked</option>
+							<option value="0">Not Booked</option>
+						</select>
+						
+						<label>Hold Status</label>
+						<select id="property_hold">
+							<option value="">-- All --</option>
+							<option value="plot">Hold</option>
+							<option value="flat">Not Hold</option>
+						</select>
+						
+						<input type="text" id="search_block" placeholder="search by block name" />
+						<input type="button" id="search_property" value="search" />
+						<br/><br/>
+						
+    					<table class="table table-bordered table-striped text-center" id="property_table"></table>
 					</div>
                 </div>
             </div>
@@ -116,10 +92,12 @@
         <i class="fas fa-angle-up"></i>
     </a>
 
+<input type="text" id="permission" value="<?php echo $permission['plot_entry']; ?>" />
 <?php print_r($footer); ?>
 
 <script>
 	var baseUrl = $('#base_url').val();
+	var permission = '<?php echo $permission["plot_entry"]; ?>';
 	
 	$(document).on('click','.ishold',function(){
 		var pid = $(this).data('id');
@@ -266,8 +244,112 @@
 		
 		$('#mymodal').modal({
 			'show' : true
-		});	
+		});
 	});
+	
+	
+	
+	getproperty();
+	
+	
+	$(document).on('change','#property_type,#property_facing,#property_booking,#property_hold,#search_block',function(){
+		getproperty();
+	});
+	
+	$(document).on('keyup','#search_block',function(){
+		getproperty();
+	});
+	
+	$(document).on('click','#search_property',function(){
+		getproperty();
+	});
+	
+	function getproperty(){
+		$.ajax({
+              type: 'POST',
+              url : baseUrl + 'Dashboard_ctrl/property_list',
+              data : {
+              	'pro_type': $('#property_type').val(),
+        		'pro_facing' : $('#property_facing').val(),
+        		'pro_booking' : $('#property_booking').val(),
+        		'pro_hold' : $('#property_hold').val(),
+        		'pro_block' : $('#search_block').val()
+              },
+              dataType : 'json',
+              success: function(response){
+              	console.log(response);
+              	if(response.status == 200){
+              		var x = '<thead>'+
+    							'<tr class="bg-dark text-light">'+
+    								'<th>Sno</th>'+
+    								'<th>Category</th>'+
+    								'<th>Block Name</th>'+
+    								'<th>Facing</th>'+
+    								'<th>Enquiries</th>'+
+    								'<th>Is Booked</th>';
+    								if(permission == '1'){
+        								x = x + '<th>on Hold</th>'+
+        								'<th>Action</th>';
+    								}
+    							x = x + '</tr>'+
+    						'</thead><tbody>';
+    				
+    				$.each(response.data,function(key,value){
+    					x = x + '<tr>'+
+    								'<td>'+ parseInt(parseInt(key) + 1) +'.</td>'+
+    								'<td>'+ value.category.toUpperCase() +'</td>'+
+    								'<td>'+ value.block.toUpperCase() +'</td>';
+    								
+    								if(value.facing == 'E'){
+    									x = x + '<td>EAST</td>';
+    								} else if(value.facing == 'W'){
+    									x = x + '<td>WEST</td>';
+    								} else if(value.facing == 'N'){
+    									x = x + '<td>NORTH</td>';
+    								} else if(value.facing == 'S'){
+    									x = x + '<td>SOUTH</td>';
+    								}
+    								
+    								if(value.enquiry != '0'){
+    									x = x + '<td><a href="#" class="enquiry" data-pid="'+ value.pid +'">'+ value.enquiry +'</a></td>';
+    								} else {
+    									x = x + '<td></td>';
+    								}
+    								
+    								if(value.is_booked != '0'){
+    									x = x + '<td><a href="#" class="booked" data-pid="'+ value.pid +'">'+ value.is_booked +'</a></td>';
+    								} else {
+    									x = x + '<td></td>';
+    								}
+    								if(permission == '1'){
+    								
+        								if(value.hold == '1'){
+        									x = x + '<td><input class="ishold" data-id="'+ value.pid +'" type="checkbox" checked /></td>';
+        								} else {
+        									x = x + '<td><input class="ishold" data-id="'+ value.pid +'" type="checkbox"/></td>';
+        								}
+    								
+    									x = x + '<td>'+
+    										'<a href="'+ baseUrl +'property/edit/'+ value.pid +'" class="text-info pedit" title="Edit Property" data-id="'+ value.pid +'">'+
+    											'<i class="fas fa-pencil-alt"></i>'+
+    										'</a>'+
+    										'&nbsp;'+
+    										'<a href="javascript:void(0);" class="text-danger pdelete" title="Delete property" data-id="'+ value.pid +'">'+
+    											'<i class="fas fa-trash-alt"></i>'+
+    										'</a>'+
+    									'</td>';
+    								}
+    							x = x + '</tr>';
+    				});
+    				
+    				x = x + '</tbody>';
+    				$('#property_table').html(x);
+              	} else {
+              		$('#property_table').html('No record found.');
+              	}
+              }
+        });
+	}
 	
 </script>
 </body>
