@@ -38,6 +38,8 @@ class Property_ctrl extends CI_Controller {
             $data['maintenance'] = trim($this->input->post('maintenance'));
             $data['club_house'] = trim($this->input->post('club_house'));
             $data['transformer'] = trim($this->input->post('trans_elec'));
+            $data['premium_per'] = $this->input->post('premimuminper') == 'true' ? 1 : 0;
+            $data['premium_amount'] = $this->input->post('premimumamount');
             $data['created_at'] = date('Y-m-d H:i:s');
             $data['created_by'] = $this->session->userdata('userid');
         } else {
@@ -53,6 +55,8 @@ class Property_ctrl extends CI_Controller {
             $data['property_type'] = $this->input->post('property_type');
             $data['corner'] = trim($this->input->post('corner'));
             $data['garden'] = trim($this->input->post('garden'));
+            $data['premium_per'] = $this->input->post('premimuminper') == 'true' ? 1 : 0;
+            $data['premium_amount'] = $this->input->post('premimumamount');
             $data['created_at'] = date('Y-m-d H:i:s');
             $data['created_by'] = $this->session->userdata('userid');   
         }

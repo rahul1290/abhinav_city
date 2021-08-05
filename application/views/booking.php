@@ -371,24 +371,30 @@
                     					'</table></td>';
                     					AmenitiesAmount = parseFloat(parseFloat(parseFloat(value.maintenance) + parseFloat(value.transformer)) + parseFloat(value.club_house)); 
                     				x = x + '<td valign="top">'+ AmenitiesAmount +'</td>'+
-                    			'</tr>'+
-                    			'<tr>'+
+                    			'</tr>';
+                    			
+                    				var pro_per = '';
+                    				if(value.premium_per == '1'){
+                    					pro_per = value.premium_amount + '%';	
+                    				} else {
+                    					pro_per = 0;
+                    				}
+                    				
+                    			x = x + '<tr>'+
                     				'<td>Premium:-'+
                     					'<table>'+
                     						'<tr>'+
-                    							'<td>Corner 5% -</td>';
+                    							'<td>Corner '+ pro_per +' -</td>';
                     							if(value.corner == '1'){
-                    								x = x + '<td>'+ (parseFloat(parseFloat(value.rate_plot) * parseFloat(value.area))*5)/100 +'</td>';
-                    								PremiumAmount = parseFloat(PremiumAmount + parseFloat((parseFloat(parseFloat(value.rate_plot) * parseFloat(value.area))*5)/100));
-                    								console.log('377');
-                    								console.log(PremiumAmount);
+                    								x = x + '<td>'+ (parseFloat(parseFloat(value.rate_plot) * parseFloat(value.area))* parseFloat(pro_per))/100 +'</td>';
+                    								PremiumAmount = parseFloat(PremiumAmount + parseFloat((parseFloat(parseFloat(value.rate_plot) * parseFloat(value.area))*parseFloat(pro_per))/100));
                     							} else {
                     								x = x + '<td></td>';
                     							}
                     							
                     						x = x + '</tr>'+
                     						'<tr>'+
-                    							'<td>Garder 5% -</td>';
+                    							'<td>Garder '+ pro_per +' -</td>';
                     							if(value.garden == '1'){
                     								x = x + '<td>'+ (parseFloat(parseFloat(value.rate_plot) * parseFloat(value.area))*5)/100 +'</td>';
                     								PremiumAmount = parseFloat(PremiumAmount + parseFloat((parseFloat(parseFloat(value.rate_plot) * parseFloat(value.area))*5)/100));

@@ -75,6 +75,51 @@ class Auth extends CI_Controller {
 	    }
 	}
 	
+	function profile(){
+	    $data['title'] = $data['title'] = $this->config->item('project_title'). ' | Profile';
+	    
+	    $this->db->select('*');
+	    $data['userDetail'] = $this->db->get_where('user',array('id'=>$this->session->userdata('userid'),'status'=>1))->result_array();
+	    
+	    $data['header']  = $this->load->view('common/header',$data,true);
+	    $data['topbar']  = $this->load->view('common/topbar',$data,true);
+	    $data['sidebar'] = $this->load->view('common/sidebar',$data,true);
+	    $data['footer']  = $this->load->view('common/footer',$data,true);
+	    $this->load->view('profile',$data);
+	}
+	
+	function profile_update(){
+	    $data['fname'] = $this->input->post('fname');
+	    $data['lname'] = $this->input->post('lname');
+	    $data['email'] = $this->input->post('email');
+	    $data['contact_no'] = $this->input->post('contact_no');
+	    
+	    $this->db->where('id',$this->session->userdata('userid'));
+	    $this->db->update('user',$data);
+	    
+	    echo json_encode(array('status'=>200));
+	}
+	
+	function change_password(){
+	    $data['currpassword'] = trim($this->input->post('currpassword'));
+	    $data['newpassword'] = trim($this->input->post('newpassword'));
+	    
+	    $this->db->select('*');
+	    $result = $this->db->get_where('user',array(
+	        'id'=>$this->session->userdata('userid'),
+	        'password'=>$data['currpassword'],
+	        'status'=>1))->result_array();
+	   
+	    if(count($result)>0){
+	        $this->db->where('id',$this->session->userdata('userid'));
+	        $this->db->update('user',array('password'=>$data['newpassword']));
+	        
+	        echo json_encode(array('msg'=>'password changed.','status'=>200));
+	    } else {
+	        echo json_encode(array('msg'=>'password not matched.','status'=>500));
+	    }
+	}
+	
 	function logout(){
 	    $this->session->sess_destroy();
 	    $this->session->set_flashdata('msg', '<span class="text-info">Logout successfully.</span>');
