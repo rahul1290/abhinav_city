@@ -372,15 +372,12 @@ if (isset($property_detail)) {
                                                     <label for="staticEmail"
                                                         class="col-sm-3 col-form-label">Maintenance</label>
                                                     <div class="col-sm-9">
-                                                        <input type="text" id="maintenance" name="maintenance"
-                                                            placeholder="Maintenance cost in rs." value="<?php
-
-if (isset($property_detail)) {
-                echo $property_detail[0]['maintenance'];
-            }
-            ?>" class="form-control" />
-                                                        <div class="text-danger" id="maintenance_error"
-                                                            style="display: none;"></div>
+                                                        <input type="text" id="maintenance" name="maintenance" placeholder="0" value="<?php
+                                                        if (isset($property_detail)) {
+                                                            echo $property_detail[0]['maintenance'];
+                                                        }
+                                                        ?>" class="form-control" />
+                                                        <div class="text-danger" id="maintenance_error" style="display: none;"></div>
                                                     </div>
                                                 </div>
 
@@ -390,32 +387,48 @@ if (isset($property_detail)) {
                                                     <div class="col-sm-9">
                                                         <input type="text" name="club_house" id="club_house"
                                                             placeholder="Club house cost in rs." value="<?php
-
-if (isset($property_detail)) {
-                echo $property_detail[0]['club_house'];
-            }
-            ?>" class="form-control" />
+                                                            if (isset($property_detail)) {
+                                                                echo $property_detail[0]['club_house'];
+                                                            } ?>" class="form-control" />
                                                         <div class="text-danger" id="club_house_error"
                                                             style="display: none;"></div>
                                                     </div>
                                                 </div>
-
-                                                <label>Transformer/Electricity</label>
-                                                <div class="input-group mb-3">
-                                                    <input type="text" name="trans_elec" id="trans_elec"
-                                                        placeholder="Transform/Electricity cost in rs."
-                                                        class="form-control" value="<?php
-
-if (isset($property_detail)) {
-                echo $property_detail[0]['transformer'];
-            }
-            ?>" />
-                                                    <div class="input-group-append">
-                                                        <span class="input-group-text" id="basic-addon2">kw</span>
+                                                
+                                                <div class="form-group row" id="parking-block" style="display: none;">
+                                                    <label class="col-sm-3 col-form-label">Parking</label>
+                                                    <div class="col-sm-9">
+                                                        <input type="text" name="parking" id="parking" placeholder="" value="" class="form-control" />
+                                                        <div class="text-danger" id="parking_error"
+                                                            style="display: none;"></div>
                                                     </div>
                                                 </div>
-                                                <div class="text-danger" id="trans_elec_error" style="display: none;">
+                                                
+												<br/>
+                                                <label>Transformer/Electricity :</label>
+                                                <div class="row p-2">
+                                                    <div class="col input-group mb-3 p-0">
+                                                    	<input type="text" name="trans_kw" id="trans_kw" placeholder="" class="form-control" value="<?php if(isset($property_detail)){
+                                                    	    echo $property_detail[0]['transformer_kw'];
+                                                    	}?>" />
+                                                        <div class="input-group-append">
+                                                            <span class="input-group-text" id="basic-addon2">kw</span>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class="col input-group pl-1 pr-0">
+                                                    	<input type="text" name="trans_rate" id="trans_rate" placeholder="" class="form-control" value="<?php if(isset($property_detail)){
+                                                    	    echo $property_detail[0]['transformer_rate'];
+                                                    	}?>" />
+                                                    </div>
+                                                    
+                                                    <div class="col input-group pl-1">
+                                                    	<input type="text" name="trans_amount" id="trans_amount" readonly placeholder="" class="form-control" value="<?php if(isset($property_detail)){
+                                                    	    echo $property_detail[0]['transformer_kw'] * $property_detail[0]['transformer_rate']; 
+                                                    	}?>" />
+                                                    </div>
                                                 </div>
+                                                <div class="text-danger" id="trans_elec_error" style="display: none;"></div>
                                             </div>
 
                                             <?php if($this->uri->segment(2) != ''){ ?>
@@ -674,7 +687,14 @@ if (isset($property_detail)) {
             $('#construction_area_block,#bhk_box').hide();
             $('#nonplot_area,#plotno,#plot_rate').show();
             $('#blockno,#block_rate').hide();
-        } else {
+            $('#parking-block').hide();
+        } else if(x == 'flat'){
+        	$('#parking-block').show();
+        	$('#construction_area_block,#bhk_box').show();
+            $('#nonplot_area,#plotno,#plot_rate').hide();
+            $('#blockno,#block_rate').show();
+        }else {
+        	$('#parking-block').hide();
             $('#construction_area_block,#bhk_box').show();
             $('#nonplot_area,#plotno,#plot_rate').hide();
             $('#blockno,#block_rate').show();
@@ -682,8 +702,8 @@ if (isset($property_detail)) {
         
         $('#maintenance').val(0);
         $('#club_house').val(0);
-        $('#trans_elec').val(0);
         $('#per_amount').val(5);
+        $('#corner').prop('checked', false);
         $('#calculateinper').prop('checked', true);
         $('#premium_cal').hide();
         $('#plot_no').val(0);
@@ -692,7 +712,14 @@ if (isset($property_detail)) {
         $('#rate_of_plot').val(0);
         $('#block').val(0);
         $('#construction_area').val(0);
-        $('#rate_of_block').val(0);	
+        $('#parking').val(0);
+        $('#rate_of_block').val(0);
+        $('#trans_kw').val(0);
+        $('#trans_rate').val(0);
+        $('#trans_amount').val(0);
+        
+        checkpremium();	
+        totalCost();
     });
 
 
@@ -747,13 +774,6 @@ if (isset($property_detail)) {
                 $('#club_house_error').html('').css('display', 'none');
             }
 
-            if ($('#trans_elec').val() == '') {
-                formvalid = false;
-                $('	#trans_elec_error').html('Enter Rate of transformers').css('display', 'block');
-            } else {
-                $('#trans_elec_error').html('').css('display', 'none');
-            }
-
             var corner;
             var garden;
             if ($("#corner").prop('checked') == true) {
@@ -780,9 +800,10 @@ if (isset($property_detail)) {
                         'rate_of_plot': $('#rate_of_plot').val(),
                         'corner': corner,
                         'garden': garden,
+                        'trans_kw' : $('#trans_kw').val(),
+                        'trans_rate' : $('#trans_rate').val(),
                         'maintenance': $('#maintenance').val(),
                         'club_house': $('#club_house').val(),
-                        'trans_elec': $('#trans_elec').val(),
                         'premimuminper' : $('#calculateinper').prop("checked"),
                         'premimumamount' : $('#per_amount').val()
                     },
@@ -847,13 +868,6 @@ if (isset($property_detail)) {
                 $('#club_house_error').html('').css('display', 'none');
             }
 
-            if ($('#trans_elec').val() == '') {
-                formvalid = false;
-                $('	#trans_elec_error').html('Enter Rate of transformers').css('display', 'block');
-            } else {
-                $('#trans_elec_error').html('').css('display', 'none');
-            }
-
             var corner;
             var garden;
             if ($("#corner").prop('checked') == true) {
@@ -881,10 +895,11 @@ if (isset($property_detail)) {
                         'rate_of_plot': $('#rate_of_block').val(),
                         'corner': corner,
                         'garden': garden,
+                        'trans_kw' : $('#trans_kw').val(),
+                        'trans_rate' : $('#trans_rate').val(),
                         'property_type': $('#bhk').val(),
                         'maintenance': $('#maintenance').val(),
-                        'club_house': $('#club_house').val(),
-                        'trans_elec': $('#trans_elec').val()
+                        'club_house': $('#club_house').val()
                     },
                     dataType: 'json',
                     success: function(response) {
@@ -1122,13 +1137,6 @@ if (isset($property_detail)) {
                 $('#club_house_error').html('').css('display', 'none');
             }
 
-            if ($('#trans_elec').val() == '') {
-                formvalid = false;
-                $('	#trans_elec_error').html('Enter Rate of transformers').css('display', 'block');
-            } else {
-                $('#trans_elec_error').html('').css('display', 'none');
-            }
-
             var corner;
             var garden;
             if ($("#corner").prop('checked') == true) {
@@ -1158,7 +1166,6 @@ if (isset($property_detail)) {
                         'garden': garden,
                         'maintenance': $('#maintenance').val(),
                         'club_house': $('#club_house').val(),
-                        'trans_elec': $('#trans_elec').val(),
                         'premimuminper' : $('#calculateinper').prop("checked"),
                         'premimumamount' : $('#per_amount').val()
                     },
@@ -1226,13 +1233,6 @@ if (isset($property_detail)) {
                 $('#club_house_error').html('').css('display', 'none');
             }
 
-            if ($('#trans_elec').val() == '') {
-                formvalid = false;
-                $('	#trans_elec_error').html('Enter Rate of transformers').css('display', 'block');
-            } else {
-                $('#trans_elec_error').html('').css('display', 'none');
-            }
-
             var corner;
             var garden;
             if ($("#corner").prop('checked') == true) {
@@ -1263,8 +1263,7 @@ if (isset($property_detail)) {
                         'garden': garden,
                         'property_type': $('#bhk').val(),
                         'maintenance': $('#maintenance').val(),
-                        'club_house': $('#club_house').val(),
-                        'trans_elec': $('#trans_elec').val()
+                        'club_house': $('#club_house').val()
                     },
                     dataType: 'json',
                     success: function(response) {
@@ -1285,7 +1284,7 @@ if (isset($property_detail)) {
     });
 
 
-    $(document).on('keyup', '#rate_of_plot,#rate_of_block,#maintenance,#club_house,#trans_elec', function() {
+    $(document).on('keyup', '#rate_of_plot,#rate_of_block,#maintenance,#club_house', function() {
         totalCost();
     });
 
@@ -1345,7 +1344,9 @@ if (isset($property_detail)) {
         var garden = 0;
         var maintenance = 0;
         var club_house = 0;
-        var trans_elec = 0;
+        var kw = $('#trans_kw').val();
+    	var trasformer = $('#trans_amount').val();
+    	 
         if ($('#corner').prop('checked') == true) {
             corner = (rate * 5) / 100;
         }
@@ -1365,17 +1366,47 @@ if (isset($property_detail)) {
         } else {
             club_house = $('#club_house').val();
         }
-
-        if ($('#trans_elec').val() == '') {
-            trans_elec = '0';
-        } else {
-            trans_elec = $('#trans_elec').val();
-        }
-
-        $('#total_cost').html(parseFloat(rate) + parseFloat(totalPremium) + parseFloat(maintenance) +
-            parseFloat(club_house) + parseFloat(trans_elec));
+        $('#total_cost').html(parseFloat(totalPremium) + parseFloat(maintenance) +
+            parseFloat(club_house) + parseFloat(trasformer));
+       
+       debugger;
+       console.log(parseFloat(totalPremium) + parseFloat(maintenance) +
+            parseFloat(club_house) + parseFloat(trasformer));
+           
     }
+    
+    
+    function transformerRate(){
+    	var kw = $('#trans_kw').val();
+    	var rate = $('#trans_rate').val();
+    	var amount = parseFloat(parseFloat(kw) * parseFloat(rate));
+    	if(isNaN(amount)){
+    		amount = 0;
+    	}
+    	$('#trans_amount').val(amount); 
+    }
+    
+    $(document).on('keyup','#trans_kw,#trans_rate',function(){
+    	transformerRate();
+    	totalCost();
+    });
+    
+    $(document).on('keyup','#plot_no',function(){
+    	$('#plot_no').val($(this).val().toUpperCase());
+    });
     </script>
+
+
+
+
+
+
+
+
+
+
+
+
 
 </body>
 

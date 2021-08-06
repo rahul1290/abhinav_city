@@ -37,7 +37,8 @@ class Property_ctrl extends CI_Controller {
             $data['garden'] = trim($this->input->post('garden'));
             $data['maintenance'] = trim($this->input->post('maintenance'));
             $data['club_house'] = trim($this->input->post('club_house'));
-            $data['transformer'] = trim($this->input->post('trans_elec'));
+            $data['transformer_kw'] = trim($this->input->post('trans_kw'));
+            $data['transformer_rate'] = trim($this->input->post('trans_rate'));
             $data['premium_per'] = $this->input->post('premimuminper') == 'true' ? 1 : 0;
             $data['premium_amount'] = $this->input->post('premimumamount');
             $data['created_at'] = date('Y-m-d H:i:s');
@@ -48,7 +49,8 @@ class Property_ctrl extends CI_Controller {
             $data['area'] = trim($this->input->post('area'));
             $data['rate_plot'] = trim($this->input->post('rate_of_plot'));
             $data['facing'] = $this->input->post('facing');
-            $data['transformer'] = trim($this->input->post('trans_elec'));
+            $data['transformer_kw'] = trim($this->input->post('trans_kw'));
+            $data['transformer_rate'] = trim($this->input->post('trans_rate'));
             $data['maintenance'] = trim($this->input->post('maintenance'));
             $data['club_house'] = trim($this->input->post('club_house'));
             $data['area'] = trim($this->input->post('construction_area'));
