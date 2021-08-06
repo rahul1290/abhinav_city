@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 02, 2021 at 06:06 AM
+-- Generation Time: Aug 06, 2021 at 02:06 PM
 -- Server version: 10.4.19-MariaDB
 -- PHP Version: 7.3.28
 
@@ -40,6 +40,13 @@ CREATE TABLE `enquiry` (
   `status` tinyint(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Dumping data for table `enquiry`
+--
+
+INSERT INTO `enquiry` (`eid`, `client_name`, `property_id`, `client_number`, `discount`, `remark`, `created_at`, `created_by`, `status`) VALUES
+(1, 'rahul', 1, '9770866241', NULL, 'test', '2021-08-03 11:36:32', 1, 1);
+
 -- --------------------------------------------------------
 
 --
@@ -50,32 +57,32 @@ CREATE TABLE `properties` (
   `pid` int(11) NOT NULL,
   `category` varchar(20) DEFAULT NULL,
   `block` varchar(20) NOT NULL,
-  `area` varchar(20) NOT NULL,
+  `area` varchar(20) DEFAULT NULL,
   `facing` varchar(5) NOT NULL,
-  `premium` varchar(10) DEFAULT NULL,
-  `transformer` float(10,2) DEFAULT NULL,
-  `electricity` varchar(10) DEFAULT NULL,
+  `transformer_kw` float(10,2) DEFAULT NULL,
+  `transformer_rate` float(10,2) DEFAULT NULL,
   `maintenance` float(10,2) DEFAULT NULL,
   `club_house` float(10,2) DEFAULT NULL,
-  `amenities` float(10,2) DEFAULT NULL,
   `rate_plot` float(10,2) DEFAULT NULL,
-  `plot_grand_total` float(10,2) DEFAULT NULL,
-  `land_premium` float(10,2) DEFAULT NULL,
-  `construction_area` varchar(12) DEFAULT NULL,
-  `2bhk_duplex` varchar(10) DEFAULT NULL,
-  `2bhk_duplex_grand_total` float(10,2) DEFAULT NULL,
-  `3bhk_duplex` varchar(10) DEFAULT NULL,
-  `3bhk_duplex_grand_total` float(10,2) DEFAULT NULL,
-  `bank_rate` float(10,2) DEFAULT NULL,
-  `vicinity` varchar(10) DEFAULT NULL,
-  `corner` float(10,2) DEFAULT NULL,
-  `garden` float(10,2) DEFAULT NULL,
+  `property_type` varchar(20) DEFAULT NULL,
+  `corner` tinyint(1) DEFAULT 0,
+  `garden` tinyint(1) DEFAULT 0,
   `hold` tinyint(1) NOT NULL DEFAULT 0,
   `is_booked` tinyint(1) NOT NULL DEFAULT 0,
+  `premium_per` tinyint(1) DEFAULT NULL,
+  `premium_amount` float(10,2) DEFAULT NULL,
   `created_at` datetime NOT NULL,
   `created_by` int(11) NOT NULL,
   `status` tinyint(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `properties`
+--
+
+INSERT INTO `properties` (`pid`, `category`, `block`, `area`, `facing`, `transformer_kw`, `transformer_rate`, `maintenance`, `club_house`, `rate_plot`, `property_type`, `corner`, `garden`, `hold`, `is_booked`, `premium_per`, `premium_amount`, `created_at`, `created_by`, `status`) VALUES
+(15, 'plot', 'P1', '1476', 'E', 10.00, 200.00, 75000.00, 100000.00, 2100.00, NULL, 1, 0, 0, 0, 1, 5.00, '2021-08-05 14:22:19', 1, 0),
+(16, 'plot', 'P1', '1476', 'E', 75.00, 1000.00, 75000.00, 100000.00, 2100.00, NULL, 1, 0, 0, 0, 1, 5.00, '2021-08-06 02:34:41', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -98,7 +105,9 @@ CREATE TABLE `property_transections` (
   `adhaar` varchar(100) NOT NULL,
   `created_by` int(11) NOT NULL,
   `created_at` datetime NOT NULL,
-  `status` tinyint(1) NOT NULL DEFAULT 1
+  `status` tinyint(1) NOT NULL DEFAULT 1,
+  `discount` int(11) DEFAULT NULL,
+  `construction_area` float(10,2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -127,7 +136,9 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`id`, `uname`, `email`, `contact_no`, `fname`, `lname`, `password`, `created_by`, `created_at`, `status`, `active`, `user_type`) VALUES
-(1, 'admin', 'sadmin@admin.com', '9770866241', 'super', 'admin', '123456', NULL, '2021-07-31 13:59:01', 1, 1, 'super_admin');
+(1, 'admin', 'sadmin@admin.com', '9770866241', 'super', 'admin', '123456', NULL, '2021-07-31 13:59:01', 1, 1, 'super_admin'),
+(2, 'abhinav_98', 'abhinavadmin@gmail.com', '', 'abhinav', 'admin', '123', 1, '2021-08-02 12:37:16', 1, 1, 'admin'),
+(3, 'abhinav_84', 'abhinavbroker@gmail.com', '', 'abhinav1', 'broker', '1234567', 1, '2021-08-02 12:38:37', 1, 1, 'broker');
 
 -- --------------------------------------------------------
 
@@ -149,7 +160,9 @@ CREATE TABLE `user_permission` (
 --
 
 INSERT INTO `user_permission` (`id`, `user_Id`, `booking`, `plot_entry`, `user_entry`, `status`) VALUES
-(1, 1, 1, 1, 1, 1);
+(1, 1, 1, 1, 1, 1),
+(2, 2, 1, 1, 1, 1),
+(3, 3, 1, 0, 0, 1);
 
 --
 -- Indexes for dumped tables
@@ -196,13 +209,13 @@ ALTER TABLE `user_permission`
 -- AUTO_INCREMENT for table `enquiry`
 --
 ALTER TABLE `enquiry`
-  MODIFY `eid` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `eid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `properties`
 --
 ALTER TABLE `properties`
-  MODIFY `pid` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `pid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `property_transections`
@@ -214,13 +227,13 @@ ALTER TABLE `property_transections`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `user_permission`
 --
 ALTER TABLE `user_permission`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 SET FOREIGN_KEY_CHECKS=1;
 COMMIT;
 
