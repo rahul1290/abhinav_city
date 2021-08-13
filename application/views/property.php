@@ -110,25 +110,23 @@ if (isset($property_detail)) {
                                             </div>
 
                                             <div class="form-group row" id="blockno" style="display: <?php
-
-if (isset($property_detail)) {
-            if ($property_detail[0]['category'] != 'plot') {
-                echo 'flex';
-            } else {
-                echo 'none';
-            }
-        }
-        ?>;">
-                                                <label for="staticEmail" class="col-sm-3 col-form-label">Block<span
+                                                if (isset($property_detail)) {
+                                                    if($property_detail[0]['category'] == 'bungalow' || $property_detail[0]['category'] == 'flat') {
+                                                        echo 'flex';
+                                                    } else {
+                                                        echo 'none';
+                                                    }
+                                                }
+                                                ?>;">
+                                                <label class="col-sm-3 col-form-label" id="blockText">Block<span
                                                         class="text-danger">*</span></label>
                                                 <div class="col-sm-9">
                                                     <input type="text" class="form-control" id="block" name="block"
                                                         value="<?php
-
-if (isset($property_detail)) {
-                echo $property_detail[0]['block'];
-            }
-            ?>" placeholder="Enter block name">
+                                                            if (isset($property_detail)) {
+                                                                echo $property_detail[0]['block'];
+                                                            }
+                                                        ?>" placeholder="Enter block name">
                                                     <div class="text-danger" id="block_error" style="display: none;">
                                                     </div>
                                                 </div>
@@ -177,26 +175,27 @@ if (isset($property_detail)) {
                                                     </div>
                                                 </div>
                                             </div>
-
                                             <div class="form-group row" id="nonplot_area" style="display:<?php
-
-if (isset($property_detail)) {
-            if ($property_detail[0]['category'] != 'plot') {
-                echo 'none';
-            } else {
-                echo 'flex';
-            }
-        }
-        ?>;">
-                                                <label for="staticEmail" class="col-sm-3 col-form-label">Area<span
+                                                if (isset($property_detail)) {
+                                                    if ($property_detail[0]['category'] != 'plot' && $property_detail[0]['category'] != 'bungalow') {
+                                                        echo 'none';
+                                                    } else {
+                                                        echo 'flex';
+                                                    }
+                                                }
+                                                ?>;">
+                                                <label class="col-sm-3 col-form-label" id="plotareaText">Area<span
                                                         class="text-danger">*</span></label>
                                                 <div class="col-sm-9">
                                                     <input type="text" class="form-control" id="area" name="area" value="<?php
-
-if (isset($property_detail)) {
-                echo $property_detail[0]['area'];
-            }
-            ?>" placeholder="Enter area">
+                                                        if (isset($property_detail)) {
+                                                            if($property_detail[0]['category'] == 'bungalow'){
+                                                                echo $property_detail[0]['plot_area'];
+                                                            } else {
+                                                                echo $property_detail[0]['area'];
+                                                            }
+                                                        }
+                                                        ?>" placeholder="Enter area">
                                                     <div class="text-danger" id="area_error" style="display: none;">
                                                     </div>
                                                 </div>
@@ -204,72 +203,91 @@ if (isset($property_detail)) {
 
                                             <div class="form-group row" id="plot_rate" style="display:
                                             <?php
-
-if (isset($property_detail)) {
-                                                if ($property_detail[0]['category'] == 'plot') {
-                                                    echo 'flex';
-                                                } else {
-                                                    echo 'none';
+                                                if (isset($property_detail)) {
+                                                    if ($property_detail[0]['category'] == 'plot') {
+                                                        echo 'flex';
+                                                    } else {
+                                                        echo 'none';
+                                                    }
                                                 }
-                                            }
                                             ?>;">
-                                                <label for="staticEmail" class="col-sm-4 col-form-label">Rate
-                                                    of Plot</label>
+                                                <label class="col-sm-4 col-form-label">Rate of Plot</label>
                                                 <div class="col-sm-8">
                                                     <input type="text" name="rate_of_plot" id="rate_of_plot"
                                                         placeholder="Rate of plot" value="<?php
-
-if (isset($property_detail)) {
-                echo $property_detail[0]['rate_plot'];
-            }
-            ?>" class="form-control" />
+                                                            if (isset($property_detail)) {
+                                                                echo $property_detail[0]['rate_plot'];
+                                                            }
+                                                            ?>" class="form-control" />
                                                     <div class="text-danger" id="rate_of_plot_error"
                                                         style="display: none;"></div>
                                                 </div>
                                             </div>
-
+                                            
                                             <div class="form-group row" id="construction_area_block" style="display: <?php
-
-if (isset($property_detail)) {
-            if ($property_detail[0]['category'] == 'plot') {
-                echo 'none';
-            } else {
-                echo 'flex';
-            }
-        } else {
-            echo 'none';
-        }
-        ?>;">
-                                                <label for="staticEmail" class="col-sm-4 col-form-label">Construction
-                                                    area</label>
+                                                if (isset($property_detail)) {
+                                                        if ($property_detail[0]['category'] == 'plot') {
+                                                            echo 'none';
+                                                        } else {
+                                                            echo 'flex';
+                                                        }
+                                                    } else {
+                                                        echo 'none';
+                                                    }
+                                                    ?>;">
+                                                <label for="staticEmail" class="col-sm-4 col-form-label">Construction area</label>
                                                 <div class="col-sm-8">
                                                     <input type="text" class="form-control" id="construction_area"
                                                         name="construction_area" placeholder="Construction area in sqft"
                                                         value="<?php
-
-if (isset($property_detail)) {
-                echo $property_detail[0]['area'];
-            }
-            ?>" />
+                                                            if (isset($property_detail)) {
+                                                                if($property_detail[0]['category'] == 'bungalow'){
+                                                                    echo $property_detail[0]['construction_area'];
+                                                                } else {
+                                                                    echo $property_detail[0]['area'];
+                                                                }
+                                                            }
+                                                            ?>" />
                                                     <div class="text-danger" id="construction_area_error"
                                                         style="display: none;"></div>
                                                 </div>
                                             </div>
+                                            
+                                            <div class="form-group row" id="bungalow_total_area_block" style="display: <?php
+                                                if (isset($property_detail)) {
+                                                        if ($property_detail[0]['category'] == 'bungalow') {
+                                                            echo 'flex';
+                                                        } else {
+                                                            echo 'none';
+                                                        }
+                                                    } else {
+                                                        echo 'none';
+                                                    }?> ;">
+                                                <label class="col-sm-4 col-form-label">Total area</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" readonly class="form-control" id="bungalow_total_area"
+                                                        name="construction_area" placeholder="0"
+                                                        value="<?php
+                                                            if (isset($property_detail)) {
+                                                                echo $property_detail[0]['area'];
+                                                            }
+                                                            ?>" />
+                                                    <div class="text-danger" id="bungalow_total_area_error" style="display: none;"></div>
+                                                </div>
+                                            </div>
 
                                             <div class="form-group row" id="block_rate" style="display: <?php
-
-if (isset($property_detail)) {
-            if ($property_detail[0]['category'] == 'plot') {
-                echo 'none';
-            } else {
-                echo 'flex';
-            }
-        } else {
-            echo 'none';
-        }
-        ?>;">
-                                                <label for="staticEmail" class="col-sm-4 col-form-label">Rate
-                                                    of Block</label>
+                                                if (isset($property_detail)) {
+                                                    if ($property_detail[0]['category'] == 'plot') {
+                                                        echo 'none';
+                                                    } else {
+                                                        echo 'flex';
+                                                    }
+                                                } else {
+                                                    echo 'none';
+                                                }
+                                                ?>;">
+                                                <label class="col-sm-4 col-form-label" id="rateofblockText">Rate of Block</label>
                                                 <div class="col-sm-8">
                                                     <input type="text" id="rate_of_block" name="rate_of_block"
                                                         placeholder="Rate of block" value="<?php
@@ -347,7 +365,7 @@ if (isset($property_detail)) {
                     echo 'selected';
                 }
             }
-            ?>>2 BHK Duplex</option>
+            ?>>2 BHK</option>
                                                         <option value="3bhk" <?php
 
 if (isset($property_detail)) {
@@ -355,7 +373,7 @@ if (isset($property_detail)) {
                     echo 'selected';
                 }
             }
-            ?>>3 BHK Duplex</option>
+            ?>>3 BHK</option>
                                                     </select>
                                                     <div class="text-danger" id="bhk_error" style="display: none;">
                                                     </div>
@@ -395,10 +413,22 @@ if (isset($property_detail)) {
                                                     </div>
                                                 </div>
                                                 
-                                                <div class="form-group row" id="parking-block" style="display: none;">
+                                                <div class="form-group row" id="parking-block" style="display: <?php
+                                                if(isset($property_detail)){
+                                                    if($property_detail[0]['category'] == 'flat'){
+                                                        echo "flex";
+                                                    } else {
+                                                        echo "none";
+                                                    }
+                                                }
+                                                ?>;">
                                                     <label class="col-sm-3 col-form-label">Parking</label>
                                                     <div class="col-sm-9">
-                                                        <input type="text" name="parking" id="parking" placeholder="" value="" class="form-control" />
+                                                        <input type="text" name="parking" id="parking" placeholder="" value="<?php
+                                                        if(isset($property_detail)){
+                                                            echo $property_detail[0]['parking'];
+                                                        }
+                                                        ?>" class="form-control" />
                                                         <div class="text-danger" id="parking_error"
                                                             style="display: none;"></div>
                                                     </div>
@@ -677,7 +707,36 @@ if (isset($property_detail)) {
 	
 	
 	$('#calculateinper').prop('checked', <?php if(isset($property_detail[0]['premium_per']) && $property_detail[0]['premium_per'] == '1') { echo 'true'; } else { echo 'false'; }?>);
-	$('#per_amount').val(<?php if(isset($property_detail[0]['premium_amount'])) { echo $property_detail[0]['premium_amount']; } else { echo '0'; }?>);
+	$('#per_amount').val(<?php if(isset($property_detail[0]['premium_amount'])) { echo $property_detail[0]['premium_amount']; } else { echo '5'; }?>);
+	
+	$('#blockText').html('<?php if(isset($property_detail[0]['category'])){ 
+	    if($property_detail[0]['category'] == 'flat'){
+	        echo 'Flat no.';
+	    } else if($property_detail[0]['category'] == 'plot'){
+	        echo 'Plot no.';
+	    } else {
+	        echo 'Block no.';
+	    }
+	}?>');
+	
+    $('#rateofblockText').html('<?php if(isset($property_detail[0]['category'])){ 
+	    if($property_detail[0]['category'] == 'flat'){
+	        echo 'Rate of Flat';
+	    } else if($property_detail[0]['category'] == 'plot'){
+	        echo 'Rate of Plot';
+	    } else {
+	        echo 'Rate of Block';
+	    }
+	}?>');
+	
+	$('#plotareaText').html('<?php if(isset($property_detail[0]['category'])){ 
+    	    if($property_detail[0]['category'] == 'bungalow'){
+    	        echo 'Plot Area';
+    	    } 
+    	    else if($property_detail[0]['category'] == 'plot'){
+    	        echo 'Area';
+    	    }
+	}?>');
 	
 	checkpremium();
     $(document).on('change', '#category', function() {
@@ -688,16 +747,26 @@ if (isset($property_detail)) {
             $('#nonplot_area,#plotno,#plot_rate').show();
             $('#blockno,#block_rate').hide();
             $('#parking-block').hide();
+            $('#plotareaText').html('Area');
+            $('#bungalow_total_area_block').hide();
         } else if(x == 'flat'){
         	$('#parking-block').show();
         	$('#construction_area_block,#bhk_box').show();
             $('#nonplot_area,#plotno,#plot_rate').hide();
             $('#blockno,#block_rate').show();
+            $('#blockText').html('Flat No.');
+            $('#rateofblockText').html('Rate of Flat');
+            $('#bungalow_total_area_block').hide();
         }else {
         	$('#parking-block').hide();
             $('#construction_area_block,#bhk_box').show();
             $('#nonplot_area,#plotno,#plot_rate').hide();
             $('#blockno,#block_rate').show();
+            $('#blockText').html('Block No.');
+            $('#rateofblockText').html('Rate of Block');
+            $('#nonplot_area').show();
+            $('#plotareaText').html('Plot Area');
+            $('#bungalow_total_area_block').show();
         }
         
         $('#maintenance').val(0);
@@ -818,7 +887,9 @@ if (isset($property_detail)) {
                     }
                 });
             }
-        } else {
+        } 
+        
+        else if($('#category').val() == 'flat') {
             if ($('#block').val() == '') {
                 formvalid = false;
                 $('#block_error').html('Enter block name').css('display', 'block');
@@ -899,7 +970,10 @@ if (isset($property_detail)) {
                         'trans_rate' : $('#trans_rate').val(),
                         'property_type': $('#bhk').val(),
                         'maintenance': $('#maintenance').val(),
-                        'club_house': $('#club_house').val()
+                        'club_house': $('#club_house').val(),
+                        'parking' : $('#parking').val(),
+                        'premimuminper' : $('#calculateinper').prop("checked"),
+                        'premimumamount' : $('#per_amount').val(),
                     },
                     dataType: 'json',
                     success: function(response) {
@@ -912,6 +986,115 @@ if (isset($property_detail)) {
                     }
                 });
             }
+        }
+        
+        else {
+            if ($('#block').val() == '') {
+                formvalid = false;
+                $('#block_error').html('Enter block name').css('display', 'block');
+            } else {
+                $('#block_error').html('').css('display', 'none');
+            }
+
+            if ($('#facing').val() == '') {
+                formvalid = false;
+                $('	#facing_error').html('Select facing').css('display', 'block');
+            } else {
+                $('#facing_error').html('').css('display', 'none');
+            }
+            
+            if($('#area').val() == ''){
+            	formvalid = false;
+                $('#area_error').html('Enter area').css('display', 'block');
+            } else {
+            	$('#area_error').html('').css('display', 'none');
+            }
+
+            if ($('#construction_area').val() == '') {
+                formvalid = false;
+                $('#construction_area_error').html('Enter construction area').css('display', 'block');
+            } else {
+                $('#construction_area_error').html('').css('display', 'none');
+            }
+
+            if ($('#rate_of_block').val() == '') {
+                formvalid = false;
+                $('#rate_of_block_error').html('Enter rate of block').css('display', 'block');
+            } else {
+                $('#rate_of_block_error').html('').css('display', 'none');
+            }
+
+            if ($('#bhk').val() == '') {
+                formvalid = false;
+                $('#bhk_error').html('Select property type').css('display', 'block');
+            } else {
+                $('#bhk_error').html('').css('display', 'none');
+            }
+
+            if ($('#maintenance').val() == '') {
+                formvalid = false;
+                $('	#maintenance_error').html('Enter Rate of maintenance').css('display', 'block');
+            } else {
+                $('#maintenance_error').html('').css('display', 'none');
+            }
+
+            if ($('#club_house').val() == '') {
+                formvalid = false;
+                $('	#club_house_error').html('Enter Rate of club_house').css('display', 'block');
+            } else {
+                $('#club_house_error').html('').css('display', 'none');
+            }
+
+            var corner;
+            var garden;
+            if ($("#corner").prop('checked') == true) {
+                corner = 1;
+            } else {
+                corner = 0;
+            }
+
+            if ($("#garder").prop('checked') == true) {
+                garden = 1;
+            } else {
+                garden = 0;
+            }
+
+
+            if (formvalid) {
+                $.ajax({
+                    type: 'POST',
+                    url: baseUrl + 'property_ctrl/create',
+                    data: {
+                        'category': $('#category').val(),
+                        'block': $('#block').val(),
+                        'facing': $('#facing').val(),
+                        'plot_area' : $('#area').val(),
+                        'construction_area': $('#construction_area').val(),
+                        'area': $('#bungalow_total_area').val(),
+                        'rate_of_block': $('#rate_of_block').val(),
+                        'corner': corner,
+                        'garden': garden,
+                        'trans_kw' : $('#trans_kw').val(),
+                        'trans_rate' : $('#trans_rate').val(),
+                        'property_type': $('#bhk').val(),
+                        'maintenance': $('#maintenance').val(),
+                        'club_house': $('#club_house').val(),
+                        'parking' : $('#parking').val(),
+                        'premimuminper' : $('#calculateinper').prop("checked"),
+                        'premimumamount' : $('#per_amount').val(),
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.status == 200) {
+                            alert(response.msg);
+                            location.reload();
+                        } else {
+                            alert(response.msg);
+                        }
+                    }
+                });
+            }
+        
         }
 
     }); //create function
@@ -1164,6 +1347,8 @@ if (isset($property_detail)) {
                         'rate_of_plot': $('#rate_of_plot').val(),
                         'corner': corner,
                         'garden': garden,
+                        'trans_kw' : $('#trans_kw').val(),
+                        'trans_rate' : $('#trans_rate').val(),
                         'maintenance': $('#maintenance').val(),
                         'club_house': $('#club_house').val(),
                         'premimuminper' : $('#calculateinper').prop("checked"),
@@ -1183,7 +1368,7 @@ if (isset($property_detail)) {
                     }
                 });
             }
-        } else {
+        } else if ($('#category').val() == 'flat') {
             if ($('#block').val() == '') {
                 formvalid = false;
                 $('#block_error').html('Enter block name').css('display', 'block');
@@ -1261,9 +1446,124 @@ if (isset($property_detail)) {
                         'rate_of_plot': $('#rate_of_block').val(),
                         'corner': corner,
                         'garden': garden,
+                        'trans_kw' : $('#trans_kw').val(),
+                        'trans_rate' : $('#trans_rate').val(),
                         'property_type': $('#bhk').val(),
                         'maintenance': $('#maintenance').val(),
-                        'club_house': $('#club_house').val()
+                        'club_house': $('#club_house').val(),
+                        'parking' : $('#parking').val(),
+                        'premimuminper' : $('#calculateinper').prop("checked"),
+                        'premimumamount' : $('#per_amount').val(),
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.status == 200) {
+                            alert(response.msg);
+                            location.reload();
+                        } else if (response.status == 201) {
+                            alert(response.msg);
+                            window.location.href = baseUrl + 'dashboard';
+                        } else {
+                            alert(response.msg);
+                        }
+                    }
+                });
+            }
+        }
+        else {
+            if ($('#block').val() == '') {
+                formvalid = false;
+                $('#block_error').html('Enter block name').css('display', 'block');
+            } else {
+                $('#block_error').html('').css('display', 'none');
+            }
+
+            if ($('#facing').val() == '') {
+                formvalid = false;
+                $('	#facing_error').html('Select facing').css('display', 'block');
+            } else {
+                $('#facing_error').html('').css('display', 'none');
+            }
+            
+            if($('#area').val() == ''){
+            	formvalid = false;
+                $('#area_error').html('Enter area').css('display', 'block');
+            } else {
+            	$('#area_error').html('').css('display', 'none');
+            }
+
+            if ($('#construction_area').val() == '') {
+                formvalid = false;
+                $('#construction_area_error').html('Enter construction area').css('display', 'block');
+            } else {
+                $('#construction_area_error').html('').css('display', 'none');
+            }
+
+            if ($('#rate_of_block').val() == '') {
+                formvalid = false;
+                $('#rate_of_block_error').html('Enter rate of block').css('display', 'block');
+            } else {
+                $('#rate_of_block_error').html('').css('display', 'none');
+            }
+
+            if ($('#bhk').val() == '') {
+                formvalid = false;
+                $('#bhk_error').html('Select property type').css('display', 'block');
+            } else {
+                $('#bhk_error').html('').css('display', 'none');
+            }
+
+            if ($('#maintenance').val() == '') {
+                formvalid = false;
+                $('	#maintenance_error').html('Enter Rate of maintenance').css('display', 'block');
+            } else {
+                $('#maintenance_error').html('').css('display', 'none');
+            }
+
+            if ($('#club_house').val() == '') {
+                formvalid = false;
+                $('	#club_house_error').html('Enter Rate of club_house').css('display', 'block');
+            } else {
+                $('#club_house_error').html('').css('display', 'none');
+            }
+
+            var corner;
+            var garden;
+            if ($("#corner").prop('checked') == true) {
+                corner = 1;
+            } else {
+                corner = 0;
+            }
+
+            if ($("#garder").prop('checked') == true) {
+                garden = 1;
+            } else {
+                garden = 0;
+            }
+
+            if (formvalid) {
+                $.ajax({
+                    type: 'POST',
+                    url: baseUrl + 'property_ctrl/create',
+                    data: {
+                        'pid': pid,
+                        'category': $('#category').val(),
+                        'block': $('#block').val(),
+                        'facing': $('#facing').val(),
+                        'plot_area' : $('#area').val(),
+                        'construction_area': $('#construction_area').val(),
+                        'area': $('#bungalow_total_area').val(),
+                        'rate_of_block': $('#rate_of_block').val(),
+                        'corner': corner,
+                        'garden': garden,
+                        'trans_kw' : $('#trans_kw').val(),
+                        'trans_rate' : $('#trans_rate').val(),
+                        'property_type': $('#bhk').val(),
+                        'maintenance': $('#maintenance').val(),
+                        'club_house': $('#club_house').val(),
+                        'parking' : $('#parking').val(),
+                        'premimuminper' : $('#calculateinper').prop("checked"),
+                        'premimumamount' : $('#per_amount').val()
                     },
                     dataType: 'json',
                     success: function(response) {
@@ -1284,7 +1584,7 @@ if (isset($property_detail)) {
     });
 
 
-    $(document).on('keyup', '#rate_of_plot,#rate_of_block,#maintenance,#club_house', function() {
+    $(document).on('keyup', '#rate_of_plot,#rate_of_block,#maintenance,#club_house,#parking', function() {
         totalCost();
     });
 
@@ -1315,7 +1615,32 @@ if (isset($property_detail)) {
 					var x = $('#per_amount').val();
 					totalPremium = x;
 				}
-			}	    		
+			} else if($('#category').val() == 'flat'){
+				var area = $('#construction_area').val();
+				var plot_price = $('#rate_of_block').val();
+				
+				if($('#calculateinper').prop('checked') == true){ 
+					var x = (((parseFloat(area) * parseFloat(plot_price))*counter) * parseFloat($('#per_amount').val()))/100;
+					totalPremium = x;
+				} 
+				else {
+					var x = $('#per_amount').val();
+					totalPremium = x;
+				}
+			} else {
+				var area = $('#bungalow_total_area').val();
+				var plot_price = $('#rate_of_block').val();
+				
+				if($('#calculateinper').prop('checked') == true){ 
+					var x = (((parseFloat(area) * parseFloat(plot_price))*counter) * parseFloat($('#per_amount').val()))/100;
+					totalPremium = x;
+				} 
+				else {
+					var x = $('#per_amount').val();
+					totalPremium = x;
+				}
+			}
+				    		
     		$('#total_premium').html(x);
     	} else {
     		$('#premium_cal').css('display','none');
@@ -1335,8 +1660,12 @@ if (isset($property_detail)) {
             var area = $('#area').val();
             var rate = $('#rate_of_plot').val();
             rate = parseFloat(parseFloat(rate) * parseFloat(area));
-        } else {
+        } else if($('#category').val() == 'flat'){
             var area = $('#construction_area').val();
+            var rate = $('#rate_of_block').val();
+            rate = parseFloat(parseFloat(rate) * parseFloat(area));
+        } else {
+        	var area = $('#bungalow_total_area').val();
             var rate = $('#rate_of_block').val();
             rate = parseFloat(parseFloat(rate) * parseFloat(area));
         }
@@ -1345,7 +1674,14 @@ if (isset($property_detail)) {
         var maintenance = 0;
         var club_house = 0;
         var kw = $('#trans_kw').val();
-    	var trasformer = $('#trans_amount').val();
+    	var trasformer = 0;
+    	var parking = 0;
+    	
+    	if($('#trans_amount').val() == ''){
+    		trasformer = 0;
+    	} else {
+    		trasformer = $('#trans_amount').val();
+    	}
     	 
         if ($('#corner').prop('checked') == true) {
             corner = (rate * 5) / 100;
@@ -1366,13 +1702,21 @@ if (isset($property_detail)) {
         } else {
             club_house = $('#club_house').val();
         }
-        $('#total_cost').html(parseFloat(totalPremium) + parseFloat(maintenance) +
-            parseFloat(club_house) + parseFloat(trasformer));
-       
-       debugger;
-       console.log(parseFloat(totalPremium) + parseFloat(maintenance) +
-            parseFloat(club_house) + parseFloat(trasformer));
-           
+        
+        if($('#parking').val() == ''){
+        	parking = 0;
+        } else {
+        	parking  = $('#parking').val(); 
+        }
+        
+        if($('#category').val() == 'plot'){
+        	$('#total_cost').html(parseFloat(rate) + parseFloat(totalPremium) + parseFloat(maintenance) + parseFloat(club_house) + parseFloat(trasformer));
+        } else if($('#category').val() == 'flat'){
+        	$('#total_cost').html(parseFloat(rate) + parseFloat(totalPremium) + parseFloat(maintenance)+  parseFloat(parking) + parseFloat(club_house) + parseFloat(trasformer));
+        } else {
+        	console.log(parseFloat(rate) + parseFloat(totalPremium) + parseFloat(maintenance) + parseFloat(club_house) + parseFloat(trasformer));
+        	$('#total_cost').html(parseFloat(rate) + parseFloat(totalPremium) + parseFloat(maintenance) + parseFloat(club_house) + parseFloat(trasformer));
+        } 
     }
     
     
@@ -1386,7 +1730,7 @@ if (isset($property_detail)) {
     	$('#trans_amount').val(amount); 
     }
     
-    $(document).on('keyup','#trans_kw,#trans_rate',function(){
+    $(document).on('keyup','#trans_kw,#trans_rate,#rate_of_block',function(){
     	transformerRate();
     	totalCost();
     });
@@ -1394,20 +1738,15 @@ if (isset($property_detail)) {
     $(document).on('keyup','#plot_no',function(){
     	$('#plot_no').val($(this).val().toUpperCase());
     });
+    
+    $(document).on('keyup','#area,#construction_area',function(){
+    	var area = $('#area').val();
+    	var constr = $('#construction_area').val();
+    	$('#bungalow_total_area').val(parseFloat(area) + parseFloat(constr));
+    	$('#rate_of_block').val(0);
+    	totalCost();
+    });
     </script>
 
-
-
-
-
-
-
-
-
-
-
-
-
 </body>
-
 </html>

@@ -16,6 +16,15 @@ class Property_ctrl extends CI_Controller {
         $this->load->view('property',$data);
     }
     
+    public function property_category($category){
+        $data['title'] = $data['title'] = $this->config->item('project_title'). ' | Property';
+        $data['header']  = $this->load->view('common/header',$data,true);
+        $data['topbar']  = $this->load->view('common/topbar',$data,true);
+        $data['sidebar'] = $this->load->view('common/sidebar',$data,true);
+        $data['footer']  = $this->load->view('common/footer',$data,true);
+        $this->load->view('new_property',$data);
+    }
+    
     function property_list(){
         $data['title'] = $data['title'] = $this->config->item('project_title'). ' | Property';
         $data['header']  = $this->load->view('common/header',$data,true);
@@ -43,24 +52,45 @@ class Property_ctrl extends CI_Controller {
             $data['premium_amount'] = $this->input->post('premimumamount');
             $data['created_at'] = date('Y-m-d H:i:s');
             $data['created_by'] = $this->session->userdata('userid');
-        } else {
+        }
+        else if($this->input->post('category') == 'flat'){
             $data['category'] = $this->input->post('category');
             $data['block'] = trim($this->input->post('block'));
-            $data['area'] = trim($this->input->post('area'));
+            $data['facing'] = $this->input->post('facing');
+            $data['area'] = trim($this->input->post('construction_area'));
             $data['rate_plot'] = trim($this->input->post('rate_of_plot'));
+            $data['corner'] = trim($this->input->post('corner'));
+            $data['garden'] = trim($this->input->post('garden'));
+            $data['maintenance'] = trim($this->input->post('maintenance'));
+            $data['club_house'] = trim($this->input->post('club_house'));
+            $data['transformer_kw'] = trim($this->input->post('trans_kw'));
+            $data['transformer_rate'] = trim($this->input->post('trans_rate'));
+            $data['premium_per'] = $this->input->post('premimuminper') == 'true' ? 1 : 0;
+            $data['premium_amount'] = $this->input->post('premimumamount');
+            $data['property_type'] = $this->input->post('property_type');
+            $data['parking'] = $this->input->post('parking');
+            $data['created_at'] = date('Y-m-d H:i:s');
+            $data['created_by'] = $this->session->userdata('userid');
+        }
+        else {
+            $data['category'] = $this->input->post('category');
+            $data['block'] = trim($this->input->post('block'));
+            $data['plot_area'] = trim($this->input->post('plot_area'));
+            $data['construction_area'] = trim($this->input->post('construction_area'));
+            $data['rate_plot'] = trim($this->input->post('rate_of_block'));
+            $data['area'] = trim($this->input->post('area'));
             $data['facing'] = $this->input->post('facing');
             $data['transformer_kw'] = trim($this->input->post('trans_kw'));
             $data['transformer_rate'] = trim($this->input->post('trans_rate'));
             $data['maintenance'] = trim($this->input->post('maintenance'));
             $data['club_house'] = trim($this->input->post('club_house'));
-            $data['area'] = trim($this->input->post('construction_area'));
             $data['property_type'] = $this->input->post('property_type');
             $data['corner'] = trim($this->input->post('corner'));
             $data['garden'] = trim($this->input->post('garden'));
             $data['premium_per'] = $this->input->post('premimuminper') == 'true' ? 1 : 0;
             $data['premium_amount'] = $this->input->post('premimumamount');
             $data['created_at'] = date('Y-m-d H:i:s');
-            $data['created_by'] = $this->session->userdata('userid');   
+            $data['created_by'] = $this->session->userdata('userid');
         }
         
         if($this->input->post('pid') != ''){

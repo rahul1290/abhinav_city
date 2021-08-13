@@ -8,7 +8,7 @@
         margin-top : 25px;
       }
     }
-
+    
 </style>
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
@@ -62,7 +62,7 @@
                         
                 		<div class="row m-1 mt-2">
                     		<div class="col-9 p-0 m-0">
-                             <input  class="search_keyword form-control" placeholder="Type search key..." id="pro_search" name="search_keyword_id"  value="">
+                             <input  class="search_keyword form-control" placeholder="Type search key..." id="pro_search" name="search_keyword_id"  value="" autocomplete="off">
                                  <div id="search_result" class="" style="display: none;border:1px solid #e2dddd;"> 
                            		 </div>
                             </div>
@@ -73,15 +73,16 @@
                     <br/>
                     
                 </div>
+                
                 <hr/>
                 <div class="container-fluid">
-                
+                	
                 <div class="row">
-                    	<div id="plot_detail" class="col-sm-4" style="display: none;"></div>
-                    	<div class="mb-4 offset-sm-1 col-sm-6" id="customer_detail" style="display: none;">
+                		<div id="plot_detail" class="col-sm-12" style="display: none;"></div>	
+                    	<div class="mb-4 col-sm-12" id="customer_detail" style="display: none;">
                     		<h6 class="text-center text-info">Fill Customer Detail</h6>
-                    		<div style="border: 1px solid #c7c1c1;" class="p-2">
-                    		<table border="0" width="100%" id="customer_detail_table">
+                    		<div class="p-2">
+                    		<table border="0" align="center" width="70%" id="customer_detail_table">
                     			<tr>
                     				<td><span id="plot_category">Plot</span> No:</td>
                     				<td>
@@ -89,10 +90,7 @@
                     				</td>
                     			</tr>
                     			<tr>
-                    				<td colspan="2" id="plot_related_details"></td>
-                    			</tr>
-                    			<tr>
-                    				<td>Name:</td>
+                    				<td>Client Name:</td>
                     				<td>
                     					<input type="text" class="form-control" name="name" id="name" required />
                     					<div id="name_error" style="display: none";></div>
@@ -160,6 +158,45 @@
                     					<input type="text" class="form-control" name="adhaar" id="adhaar" />
                     					<div id="adhaar_error" style="display: none";></div>
                     				</td>
+                    			</tr>
+                    			<!-- Bunglow detail -->
+                        			<tr class="bunglow_detail d-none">
+                        				<td>Plot area</td>
+                        				<td><span id="bunglow_booking_plot_area"></span></td>
+                        			</tr>
+                        			<tr class="bunglow_detail d-none">
+                        				<td>Construction Area</td>
+                        				<td><span id="bunglow_booking_construction_area"></span></td>
+                        			</tr>
+                        			<tr class="bunglow_detail d-none">
+                        				<td>Total Area</td>
+                        				<td><span id="bunglow_booking_total_area"></span></td>
+                        			</tr>
+                    			<!-- Bunglow detail -->
+                    			<tr class="tcp_detail d-none">
+                    				<td>TPC Construction Facility</td>
+                    				<td><span id="booking_tcp_construction_facility"></span></td>
+                    			</tr>
+                    			
+                    			<tr class="tcp_detail d-none">
+                    				<td>TPC Construction Facility</td>
+                    				<td><span id="booking_tcp_construction_facility"></span></td>
+                    			</tr>
+                    			<tr class="tcp_detail d-none">
+                    				<td>Construction Area</td>
+                    				<td><span id="booking_construction_area"></span></td>
+                    			</tr>
+                    			<tr class="tcp_detail d-none">
+                    				<td>Construction Amount</td>
+                    				<td><span id="booking_construction_amount"></span></td>
+                    			</tr>
+                    			<tr>
+                    				<td>Discount</td>
+                    				<td><span id="booking_discount"></span></td>
+                    			</tr>
+                    			<tr>
+                    				<td>Net Amount</td>
+                    				<td><b><span id="booking_net_amount"></span></b></td>
                     			</tr>
                     			<tr>
                     				<td colspan="2" align="center">
@@ -280,6 +317,9 @@
 <script>
 	var baseUrl = $('#base_url').val();
 	var pid;
+	var totalAmount;
+	var gResponse;
+	
 	$(document).on('click','#search',function(){
 		$('#customer_detail').hide();
         $('#plot_detail').hide();
@@ -304,16 +344,22 @@
           },
           dataType : 'json',
           success: function(response){
-            console.log(response);
+            
             var x = '<h6 class="text-center text-info">Property Detail</h6>';
             if(response.status == 200){
+            	gResponse = response.data;
             	pid =  response.data[0].pid;
                 $.each(response.data,function(key,value){
                 	var PremiumAmount= 0;
                 	var AmenitiesAmount = 0;
-                	x = x + '<table border="1" width="100%">'+
+                	totalAmount = parseFloat(parseFloat(parseFloat(value.rate_plot) * parseFloat(value.area)) + parseFloat(AmenitiesAmount) + parseFloat(PremiumAmount));
+                	var categoryText = $("input[name='category']:checked").val().toUpperCase();
+                	if(categoryText == 'BUNGALOW'){
+                		categoryText = 'Block';
+                	}
+                	x = x + '<table border="1" align="center" width="70%" class="table-bordred">'+
                     			'<tr>'+
-                    				'<td>'+ $("input[name='category']:checked").val().toUpperCase() +' No.</td>'+
+                    				'<td>'+ categoryText +' No.</td>'+
                     				'<td>'+ value.block +'</td>'+
                     			'</tr>';
                     			var facing;
@@ -331,11 +377,19 @@
                     				'<td>Facing</td>'+
                     				'<td>'+ facing +'</td>'+
                     			'</tr>';
-                    			if(category != 'plot'){
+                    			if(category == 'bungalow'){
                         			x = x + '<tr>'+
-                        				'<td>Construction Area</td>'+
-                        				'<td>'+ value.area +'</td>'+
-                        			'</tr>';
+                                				'<td>Plot area</td>'+
+                                				'<td>'+ value.plot_area +'</td>'+
+                                			'</tr>'+
+                                			'<tr>'+
+                                				'<td>Construction Area</td>'+
+                                				'<td>'+ value.construction_area +'</td>'+
+                                			'</tr>'+
+                                			'<tr>'+
+                                				'<td>Total Area</td>'+
+                                				'<td>'+ value.area +'</td>'+
+                                			'</tr>';
                     			}
                     			if(category == 'plot'){ 
                     			x = x + '<tr>'+
@@ -347,29 +401,49 @@
                     			x = x + '<tr>'+
                     				'<td>Rate</td>'+
                     				'<td>'+ value.rate_plot +'</td>'+
-                    			'</tr>'+
-                    			'<tr>'+
-                    				'<td>Total</td>'+
-                    				'<td>'+ parseFloat(parseFloat(value.rate_plot) * parseFloat(value.area)) +'</td>'+
                     			'</tr>';
                     			
                     			x = x + '<tr>'+
                     				'<td>Amenities:-'+
-                    				'<table>'+
-                    						'<tr>'+
-                    							'<td>Maintenance -</td>'+
-                    							'<td>'+ value.maintenance +'</td>'+
-                    						'</tr>'+
-                    						'<tr>'+
-                    							'<td>Transformer -</td>'+
-                    							'<td>'+ value.transformer +'</td>'+
-                    						'</tr>'+
-                    						'<tr>'+
-                    							'<td>Club house -</td>'+
-                    							'<td>'+ value.club_house +'</td>'+
-                    						'</tr>'+
-                    					'</table></td>';
-                    					AmenitiesAmount = parseFloat(parseFloat(parseFloat(value.maintenance) + parseFloat(value.transformer)) + parseFloat(value.club_house)); 
+                    				'<table>';
+                    						if(value.maintenance != ''){
+                    						x = x + '<tr>'+
+                            							'<td>Maintenance -</td>'+
+                            							'<td>'+ value.maintenance +'</td>'+
+                            						'</tr>';
+                        					}
+                        					
+                        					if(value.transformer_kw != ''){
+                        						x = x + '<tr>'+
+                        							'<td>Transformer -</td>'+
+                        							'<td>'+ parseFloat((value.transformer_kw * value.transformer_rate).toFixed()) +'</td>'+
+                        						'</tr>';
+                    						}
+                    						if(category == 'flat'){
+                    							if(value.parking != ''){
+                    								x = x + '<tr>'+
+                                							'<td>Parking -</td>'+
+                                							'<td>'+ value.parking +'</td>'+
+                                						'</tr>';	
+                                				}
+                    						}
+                    						
+                    						if(value.club_house != ''){
+                    						x = x + '<tr>'+
+                        								'<td>Club house -</td>'+
+                            							'<td>'+ value.club_house +'</td>'+
+                            						'</tr>'+
+                        						'</table>';
+                    						}
+                    						x = x + '</td>';
+                    					if(category == 'plot'){
+                    						AmenitiesAmount = parseFloat(parseFloat(parseFloat(value.maintenance) + parseFloat((value.transformer_kw * value.transformer_rate))) + parseFloat(value.club_house));
+                    					} else if(category == 'flat'){
+                    						AmenitiesAmount = parseFloat(parseFloat(parseFloat(value.maintenance) + parseFloat((value.transformer_kw * value.transformer_rate)))+ parseFloat(value.parking) + parseFloat(value.club_house));
+                    					} else {
+                    						AmenitiesAmount = parseFloat(parseFloat(parseFloat(value.maintenance) + parseFloat((value.transformer_kw * value.transformer_rate))) + parseFloat(value.club_house));
+                    					}
+                    					totalAmount = totalAmount + AmenitiesAmount;
                     				x = x + '<td valign="top">'+ AmenitiesAmount +'</td>'+
                     			'</tr>';
                     			
@@ -383,23 +457,26 @@
                     			x = x + '<tr>'+
                     				'<td>Premium:-'+
                     					'<table>'+
-                    						'<tr>'+
-                    							'<td>Corner '+ pro_per +' -</td>';
+                    						'<tr>';
                     							if(value.corner == '1'){
-                    								x = x + '<td>'+ (parseFloat(parseFloat(value.rate_plot) * parseFloat(value.area))* parseFloat(pro_per))/100 +'</td>';
+                    							x = x + '<td>Corner -</td>'+
+                    								'<td>'+ (parseFloat(parseFloat(value.rate_plot) * parseFloat(value.area))* parseFloat(pro_per))/100 +'</td>';
                     								PremiumAmount = parseFloat(PremiumAmount + parseFloat((parseFloat(parseFloat(value.rate_plot) * parseFloat(value.area))*parseFloat(pro_per))/100));
+                    								totalAmount = totalAmount + PremiumAmount;
+                    								
                     							} else {
                     								x = x + '<td></td>';
                     							}
                     							
                     						x = x + '</tr>'+
-                    						'<tr>'+
-                    							'<td>Garder '+ pro_per +' -</td>';
+                    						'<tr>';
                     							if(value.garden == '1'){
-                    								x = x + '<td>'+ (parseFloat(parseFloat(value.rate_plot) * parseFloat(value.area))*5)/100 +'</td>';
-                    								PremiumAmount = parseFloat(PremiumAmount + parseFloat((parseFloat(parseFloat(value.rate_plot) * parseFloat(value.area))*5)/100));
-                    								console.log('389');
-                    								console.log(PremiumAmount);
+                    							var localPremiumAmount = 0;
+                    							x = x + '<td>Garden -</td>'+
+                    								'<td>'+ (parseFloat(parseFloat(value.rate_plot) * parseFloat(value.area))*5)/100 +'</td>';
+                    								localPremiumAmount = parseFloat((parseFloat(parseFloat(value.rate_plot) * parseFloat(value.area))*5)/100);
+                    								PremiumAmount = parseFloat(PremiumAmount + localPremiumAmount);
+                    								totalAmount = totalAmount + localPremiumAmount;
                     							} else {
                     								x = x + '<td></td>';
                     							}
@@ -410,8 +487,37 @@
                     			'</tr>'+
                     			'<tr>'+
                     				'<td>Total Amount</td>'+
-                    				'<td>'+ parseFloat(parseFloat(parseFloat(value.rate_plot) * parseFloat(value.area)) + parseFloat(AmenitiesAmount) + parseFloat(PremiumAmount)) +'</td>'+
-                    			'</tr></table>'+
+                    				'<td>'+ totalAmount +'</td>'+
+                    			'</tr>';
+                    			
+                    			if(category == 'plot'){
+                        		x = x + '<tr>'+
+                        				'<td>TPC Construction Facility</td>'+
+                        				'<td><input id="tcp" type="checkbox"/></td>'+
+                        			'</tr>';
+                    			}
+                    			x = x + '<tr><td colspan="2">'+
+                    					'<table border="1" width="100%" id="tcp_detail" style="display:none;">'+
+                    						'<tr>'+
+                                				'<td width="50%">Construction Area:</td>'+
+                                				'<td><input type="text" id="tcp_area"/></td>'+
+                                			'</tr>'+
+                                			'<tr>'+
+                                				'<td>Amount:</td>'+
+                                				'<td><input type="text" id="tcp_amount"/></td>'+
+                                			'</tr>'+
+                    					'</table>'+
+                        			'</td>'+
+                        		'</tr>'+
+                    			'<tr>'+
+                    				'<td>Discount</td>'+
+                    				'<td><input type="text" id="propDiscount" value="0" /></td>'+
+                    			'</tr>'+
+                        		'<tr>'+
+                    				'<td><b>Net Amount</b></td>'+
+                    				'<td><b><span id="netAmount">'+ totalAmount +'</span></b></td>'+
+                    			'</tr>'+
+                        	'</table>'+
                     	
                     		'<div class="mt-3 text-center">';
                     			var bookbtn;
@@ -425,7 +531,7 @@
                     			}
                     			x = x +'<b><a href="javascript:void(0);" id="enquiry">Enquiry form</a></b>&nbsp;&nbsp;<a id="booknow" href="#" class="btn btn-danger" style="display:'+ bookbtn +';">Book now</a>'+
                     			'<input type="button" id="sold_view" value="Sold View detail" class="btn btn-info" style="display:'+ soldbtn +';">'+
-                    		'</div>';
+                    		'</div><br>';
                     $('#plot_detail').html(x).show();
                 });
             } else{
@@ -436,41 +542,85 @@
 		//$('#plot_detail').show();
 	});
 	
+	
+	$(document).on('click','#tcp',function(){
+		if($(this).prop("checked") == true){
+			$('#tcp_detail').show();
+		} else {
+			$('#tcp_detail').hide();
+			$('#tcp_area').val(0);
+			$('#tcp_amount').val(0);
+			
+			netamountCal();
+			//$('#netAmount').html(totalAmount);
+		}
+	});
+	
+	$(document).on('keyup','#propDiscount,#tcp_amount,#tcp_area',function(){
+		netamountCal();
+	});
+	
+	
+	function netamountCal(){
+		var discount = $('#propDiscount').val();
+		var tcp_area = $('#tcp_area').val();
+		var tcp_amount = $('#tcp_amount').val();
+	
+		if(discount == ''){
+			discount = 0;
+		} 
+		if(tcp_amount == ''){
+			tcp_amount = 0;
+		}
+		if(tcp_area == ''){
+			tcp_area = 0;
+		}		
+		$('#netAmount').html(parseFloat(parseFloat(totalAmount) - parseFloat(discount)) + parseFloat(parseFloat(tcp_amount) * parseFloat(tcp_area)));
+	}
+	
 	$(document).on('click','#booknow',function(){
 		var category = $("input[name='category']:checked").val();
-		
-		if(category == 'plot'){
-			var x = '<table width="100%"><tr>'+
-						'<td style="width:48%;">Discount</td>'+
-						'<td>'+
-							'<input id="discount" type="checkbox"/>'+
-							'&nbsp;<input type="text" id="discount_per" placeholder="discount percentage" style="display:none;">'+
-						'</td>'+
-					'</tr>'+
-					'<tr>'+
-						'<td>Construction facility</td>'+
-						'<td>'+
-							'<input id="construction_facility" type="checkbox"/>'+
-							'&nbsp;<input type="text" id="construction_area" placeholder="construction area" style="display:none;"/>'+
-						'</td>'+
-					'</tr></table>';
-			$('#plot_related_details').html(x).show();	
-		}
-	
-		$('#customer_detail').show();
+		$('#plot_detail').hide('slow');
+		$('#customer_detail').show('slow');
 		$('#plot').val($('#pro_search').val());
 		$('#plot_category').html($("input[name='category']:checked").val().toUpperCase());
 		$(this).hide();
+		
+		if(category == 'plot'){
+			$('.tcp_detail').removeClass('d-none');
+			if($('#tcp').prop("checked") == true){
+				$('#booking_tcp_construction_facility').html('YES');
+				$('#booking_construction_area').html($('#tcp_area').val());
+				$('#booking_construction_amount').html($('#tcp_amount').val());
+			} else {
+				$('.tcp_detail').addClass('d-none');
+			}	
+			$('.bunglow_detail').addClass('d-none');		
+		}
+		else if(category == 'bungalow'){
+			console.log(gResponse);
+			$('.bunglow_detail').removeClass('d-none');
+			$('#bunglow_booking_plot_area').html(gResponse[0].plot_area);
+			$('#bunglow_booking_construction_area').html(gResponse[0].construction_area);
+			$('#bunglow_booking_total_area').html(gResponse[0].area);
+		} else {
+			$('.tcp_detail').addClass('d-none');
+		}
+		
+		$('#booking_discount').html($('#propDiscount').val() == '0' ? 'No discount' : $('#propDiscount').val());
+		$('#booking_net_amount').html($('#netAmount').text());
 	});
 	
 	$(document).on('click','#customer_cancel_btn',function(){
-		$('#customer_detail').hide();
+		$('#customer_detail').hide('slow');
 		$('#booknow').show();
+		$('#plot_detail').show('slow');
 	});
 	
 	
 	
 	$(document).on('click','#book_now',function(){
+		console.log(gResponse);
 		var formvalid = true;
 		
 		if($('#name').val() == ''){
